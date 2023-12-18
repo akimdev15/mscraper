@@ -14,11 +14,20 @@ type Album struct {
 	Artist string `json:"artist"`
 }
 
+type Song struct {
+	Title  string `json:"title"`
+	Artist string `json:"artist"`
+}
+
 // Able to retrieve new-release album from "melon.com" website
 func main() {
 	c := colly.NewCollector()
+
 	albums := scrapeNewestAlubum(c)
-	writeDataToJSON("music.json", albums)
+	writeDataToJSON("newAlbums.json", albums)
+
+	hipHopSongs := scrapeNewestHipHopSongs(c)
+	writeDataToJSON("newHiphopSongs.json", hipHopSongs)
 }
 
 // Scrape Methods -------------------------------------------------
@@ -44,16 +53,34 @@ func scrapeNewestAlubum(c *colly.Collector) []Album {
 	return albums
 }
 
-// func scrapeNewestHipHopSongs(c *colly.Collector) {
+func scrapeNewestHipHopSongs(c *colly.Collector) []Song {
 
-// 	c.OnHTML("div.info", func(h *colly.HTMLElement) {
-// 		albumName := h.ChildText("a.album_name")
-// 		artistName := h.ChildText("span.checkEllipsis a.artist_name")
+	var songs []Song
+	var currentSong Song
 
-// 	})
+	c.OnHTML("div.wrap_song_info", func(h *colly.HTMLElement) {
+		h.ForEach("div", func(_ int, div *colly.HTMLElement) {
+			// Find the nested <a> tag within the <span> tag
+			a := div.ChildText("span a")
 
-// 	c.Visit("https://www.melon.com/new/album/index.htm")
-// }
+			// Check if the <a> tag is the first or second one based on your HTML structure
+			if div.Index == 0 {
+				currentSong.Title = a
+			} else if div.Index == 1 {
+				currentSong.Artist = a
+
+				// Add to list of songs
+				songs = append(songs, currentSong)
+
+				// Reset the current song for the next iteration
+				currentSong = Song{}
+			}
+		})
+	})
+
+	c.Visit("https://www.melon.com/genre/song_list.htm?gnrCode=GN0300&dtlGnrCode=")
+	return songs
+}
 
 // Util Methods -----------------------------------------
 
@@ -69,5 +96,5 @@ func writeDataToJSON(fileName string, data any) {
 		return
 	}
 
-	os.WriteFile("music.json", content, 0644)
+	os.WriteFile(fileName, content, 0644)
 }

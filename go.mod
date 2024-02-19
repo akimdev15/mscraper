@@ -1,4 +1,4 @@
-module go-scraper
+module mscraper
 
 go 1.21.4
 

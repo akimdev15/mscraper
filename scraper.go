@@ -1,4 +1,4 @@
-package main
+package mscraper
 
 import (
 	"encoding/json"
@@ -20,15 +20,15 @@ type Song struct {
 }
 
 // Able to retrieve new-release album from "melon.com" website
-func main() {
-	c := colly.NewCollector()
+// func main() {
+// 	c := colly.NewCollector()
 
-	albums := ScrapeNewestAlubumMelon(c)
-	writeDataToJSON("newAlbums.json", albums)
+// 	albums := ScrapeNewestAlubumMelon(c)
+// 	writeDataToJSON("newAlbums.json", albums)
 
-	hipHopSongs := ScrapeNewestHipHopSongsMelon(c)
-	writeDataToJSON("newHiphopSongs.json", hipHopSongs)
-}
+// 	hipHopSongs := ScrapeNewestHipHopSongsMelon(c)
+// 	writeDataToJSON("newHiphopSongs.json", hipHopSongs)
+// }
 
 // Scrape Methods -------------------------------------------------
 

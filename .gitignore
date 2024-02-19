@@ -1,4 +1,4 @@
 .vscode/
-rss-aggregator
+go-scraper
 .env
 *.json

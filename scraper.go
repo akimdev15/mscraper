@@ -23,16 +23,16 @@ type Song struct {
 func main() {
 	c := colly.NewCollector()
 
-	albums := scrapeNewestAlubum(c)
+	albums := ScrapeNewestAlubumMelon(c)
 	writeDataToJSON("newAlbums.json", albums)
 
-	hipHopSongs := scrapeNewestHipHopSongs(c)
+	hipHopSongs := ScrapeNewestHipHopSongsMelon(c)
 	writeDataToJSON("newHiphopSongs.json", hipHopSongs)
 }
 
 // Scrape Methods -------------------------------------------------
 
-func scrapeNewestAlubum(c *colly.Collector) []Album {
+func ScrapeNewestAlubumMelon(c *colly.Collector) []Album {
 	var albums []Album
 
 	c.OnHTML("div.info", func(h *colly.HTMLElement) {
@@ -53,7 +53,7 @@ func scrapeNewestAlubum(c *colly.Collector) []Album {
 	return albums
 }
 
-func scrapeNewestHipHopSongs(c *colly.Collector) []Song {
+func ScrapeNewestHipHopSongsMelon(c *colly.Collector) []Song {
 
 	var songs []Song
 	var currentSong Song

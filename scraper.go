@@ -30,9 +30,20 @@ type Song struct {
 // 	writeDataToJSON("newHiphopSongs.json", hipHopSongs)
 // }
 
+// Methods to be called outside as a library ----------------------
+func GetNewestAlbumFromMelon() []Album {
+	c := colly.NewCollector()
+	return scrapeNewestAlubumMelon(c)
+}
+
+func GetNewestHipHopFromMelon() []Song {
+	c := colly.NewCollector()
+	return scrapeNewestHipHopSongsMelon(c)
+}
+
 // Scrape Methods -------------------------------------------------
 
-func ScrapeNewestAlubumMelon(c *colly.Collector) []Album {
+func scrapeNewestAlubumMelon(c *colly.Collector) []Album {
 	var albums []Album
 
 	c.OnHTML("div.info", func(h *colly.HTMLElement) {
@@ -53,7 +64,7 @@ func ScrapeNewestAlubumMelon(c *colly.Collector) []Album {
 	return albums
 }
 
-func ScrapeNewestHipHopSongsMelon(c *colly.Collector) []Song {
+func scrapeNewestHipHopSongsMelon(c *colly.Collector) []Song {
 
 	var songs []Song
 	var currentSong Song

@@ -19,18 +19,27 @@ type Song struct {
 	Artist string `json:"artist"`
 }
 
-// Able to retrieve new-release album from "melon.com" website
-// func main() {
-// 	c := colly.NewCollector()
+type Genre string
 
-// 	albums := ScrapeNewestAlubumMelon(c)
-// 	writeDataToJSON("newAlbums.json", albums)
-
-// 	hipHopSongs := ScrapeNewestHipHopSongsMelon(c)
-// 	writeDataToJSON("newHiphopSongs.json", hipHopSongs)
-// }
+const (
+	KBALLAD = "0100"
+	KDANCE  = "0200"
+	KHIPHOP = "0300"
+	KRB     = "0400"
+	KINDY   = "0500"
+	KROCK   = "0600"
+	KTROT   = "0700"
+	KBLUSE  = "0800"
+	POP     = "0900"
+	ROCK    = "1000"
+	ELEC    = "1100"
+	HIPHOP  = "1200"
+	RB      = "1300"
+	BLUSE   = "1400"
+)
 
 // Methods to be called outside as a library ----------------------
+// V1
 func GetNewestAlbumFromMelon() []Album {
 	c := colly.NewCollector()
 	return scrapeNewestAlubumMelon(c)
@@ -41,7 +50,40 @@ func GetNewestHipHopFromMelon() []Song {
 	return scrapeNewestHipHopSongsMelon(c)
 }
 
+// V2
+func GetNewestSongsMelon(genreCode string) []Song {
+	c := colly.NewCollector()
+	return scrapeNewestSongsMelon(c, genreCode)
+}
+
 // Scrape Methods -------------------------------------------------
+func scrapeNewestSongsMelon(c *colly.Collector, genreCode string) []Song {
+	var songs []Song
+	var currentSong Song
+
+	c.OnHTML("div.wrap_song_info", func(h *colly.HTMLElement) {
+		h.ForEach("div", func(_ int, div *colly.HTMLElement) {
+			// Find the nested <a> tag within the <span> tag
+			a := div.ChildText("span a")
+
+			// Check if the <a> tag is the first or second one based on your HTML structure
+			if div.Index == 0 {
+				currentSong.Title = a
+			} else if div.Index == 1 {
+				currentSong.Artist = a
+
+				// Add to list of songs
+				songs = append(songs, currentSong)
+
+				// Reset the current song for the next iteration
+				currentSong = Song{}
+			}
+		})
+	})
+
+	c.Visit("https://www.melon.com/genre/song_list.htm?gnrCode=GN" + genreCode)
+	return songs
+}
 
 func scrapeNewestAlubumMelon(c *colly.Collector) []Album {
 	var albums []Album

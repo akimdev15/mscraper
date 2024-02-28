@@ -19,7 +19,10 @@ type Song struct {
 	Artist string `json:"artist"`
 }
 
-type Genre string
+type Genre struct {
+	Name  string
+	Value string
+}
 
 const (
 	KBALLAD = "0100"
@@ -37,6 +40,26 @@ const (
 	RB      = "1300"
 	BLUSE   = "1400"
 )
+
+func GetAllGenreCode() []Genre {
+	genres := []Genre{
+		{Name: "KBALLAD", Value: KBALLAD},
+		{Name: "KDANCE", Value: KDANCE},
+		{Name: "KHIPHOP", Value: KHIPHOP},
+		{Name: "KRB", Value: KRB},
+		{Name: "KINDY", Value: KINDY},
+		{Name: "KROCK", Value: KROCK},
+		{Name: "KTROT", Value: KTROT},
+		{Name: "KBLUSE", Value: KBLUSE},
+		{Name: "POP", Value: POP},
+		{Name: "ROCK", Value: ROCK},
+		{Name: "ELEC", Value: ELEC},
+		{Name: "HIPHOP", Value: HIPHOP},
+		{Name: "RB", Value: RB},
+		{Name: "BLUSE", Value: BLUSE},
+	}
+	return genres
+}
 
 // Methods to be called outside as a library ----------------------
 // V1

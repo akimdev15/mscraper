@@ -1,4 +1,4 @@
-package main
+package mscraper
 
 import (
 	"encoding/json"
@@ -206,9 +206,4 @@ func writeDataToJSON(fileName string, data any) {
 	}
 
 	os.WriteFile(fileName, content, 0644)
-}
-
-func main() {
-	songs := GetMelonTop100Songs()
-	fmt.Println(songs)
 }

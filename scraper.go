@@ -1,4 +1,4 @@
-package mscraper
+package main
 
 import (
 	"encoding/json"
@@ -77,6 +77,12 @@ func GetNewestHipHopFromMelon() []Song {
 func GetNewestSongsMelon(genreCode string) []Song {
 	c := colly.NewCollector()
 	return scrapeNewestSongsMelon(c, genreCode)
+}
+
+// V3
+func GetMelonTop100Songs() []Song {
+	c := colly.NewCollector()
+	return scrapeMelonChart(c)
 }
 
 // Scrape Methods -------------------------------------------------
@@ -158,6 +164,33 @@ func scrapeNewestHipHopSongsMelon(c *colly.Collector) []Song {
 	return songs
 }
 
+func scrapeMelonChart(c *colly.Collector) []Song {
+	var songs []Song
+
+	// Use colly's OnHTML callback to parse the song elements
+	c.OnHTML("tr[data-song-no]", func(h *colly.HTMLElement) {
+		// Create a new Song struct for each song found
+		var song Song
+
+		// Get the song title (the <a> tag with the class "ellipsis" within the first column)
+		song.Title = h.ChildText("td div.ellipsis.rank01 a")
+
+		// Get the artist name (the <a> tag within the second column)
+		song.Artist = h.ChildText("td div.ellipsis.rank02 a")
+
+		// Add the song to the slice
+		songs = append(songs, song)
+	})
+
+	// Visit the Melon chart page
+	err := c.Visit("https://www.melon.com/chart/index.htm")
+	if err != nil {
+		fmt.Println("error occured during visiting melon chart page. error: ", err)
+	}
+
+	return songs
+}
+
 // Util Methods -----------------------------------------
 
 func removeBetweenBrackets(input string) string {
@@ -173,4 +206,9 @@ func writeDataToJSON(fileName string, data any) {
 	}
 
 	os.WriteFile(fileName, content, 0644)
+}
+
+func main() {
+	songs := GetMelonTop100Songs()
+	fmt.Println(songs)
 }

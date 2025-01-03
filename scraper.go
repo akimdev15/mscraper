@@ -176,7 +176,12 @@ func scrapeMelonChart(c *colly.Collector) []Song {
 		song.Title = h.ChildText("td div.ellipsis.rank01 a")
 
 		// Get the artist name (the <a> tag within the second column)
-		song.Artist = h.ChildText("td div.ellipsis.rank02 a")
+		artistElement := h.DOM.Find("td div.ellipsis.rank02 a").First()
+
+		// Extract text from the first <a> tag, ensuring only one value is captured
+		if artistElement != nil {
+			song.Artist = artistElement.Text()
+		}
 
 		// Add the song to the slice
 		songs = append(songs, song)
